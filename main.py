@@ -37,6 +37,11 @@ def variate(rgb_tup, bottom, top):
 def check_in(x, y, rad, centerx=500, centery=250):
     return ((x-centerx)**2 + (y-centery)**2) < (rad**2)
 
+def check_ring(x, y, radx, rady, ring_width):
+    inside_outer_ring = (((x-500)**2) / (radx**2) + ((y-250)**2) / (rady**2)) < 1
+    inside_inner_ring = (((x-500)**2) / ((min(200,radx-ring_width))**2) + ((y-250)**2) / ((min(200,rady-ring_width))**2)) < 1
+    return inside_outer_ring and (not inside_inner_ring)
+
 while s_in != 'qqq':
     initial_hash = hashlib.sha256(s_in.encode('utf-8')).hexdigest()
 
@@ -173,6 +178,9 @@ while s_in != 'qqq':
 
     print('color planet tertiary ... done')
 
+    colors_so_far = set([pl_tertiary, pl_secondary, pl_color])
+    moon_colors = set([])
+
     moon_bool = int(keyed_hash[-3], 16) > 11
 
     print('decide moon ... done')
@@ -187,6 +195,12 @@ while s_in != 'qqq':
 
         moon_secondary_prob = int(keyed_hash[46], 16) / 16
 
+        colors_so_far.add(moon_secondary)
+        colors_so_far.add(moon_color)
+
+        moon_colors.add(moon_secondary)
+        moon_colors.add(moon_color)
+
         for j in range(500):
             for i in range(1000):
                 if check_in(i, j, moon_size, moon_hori_pos, moon_vert_pos):
@@ -199,6 +213,42 @@ while s_in != 'qqq':
                         pixel_map[i,j] = moon_secondary
 
         print('add moon ... done')
+
+    ring_bool = int(keyed_hash[-4], 16) > 11
+
+    print('decide ring ... done')
+
+    if ring_bool:
+        ring_angle = int(keyed_hash[-5], 16) > 7
+        ring_vert_size = int(keyed_hash[47], 16) * 5 + 64
+        ring_hori_size = int(keyed_hash[48], 16) * 10 + 200
+
+        ring_width = ring_hori_size - (200 + int(keyed_hash[48], 16)*random.randrange(0,5)*2)
+        if ring_angle:
+            ring_vert_size, ring_hori_size = ring_hori_size, ring_vert_size
+
+        ring_color = hex_to_rgb(keyed_hash[49:55])
+
+        for j in range(500):
+            for i in range(1000):
+                if check_ring(i, j, ring_hori_size, ring_vert_size, ring_width):
+                    if not ring_angle:
+                        if j < 250:
+                            if pixel_map[i,j] not in colors_so_far:
+                                pixel_map[i,j] = ring_color
+                        else:
+                            if pixel_map[i,j] not in moon_colors:
+                                pixel_map[i,j] = ring_color
+                    if ring_angle:
+                        if i < 500:
+                            if pixel_map[i,j] not in colors_so_far:
+                                pixel_map[i,j] = ring_color
+                        else:
+                            if pixel_map[i,j] not in moon_colors:
+                                pixel_map[i,j] = ring_color
+
+
+        print('add ring ... done')
 
     img.save(s_in + '.png')
 
