@@ -136,7 +136,7 @@ while s_in != 'qqq':
 
     secondary_visited = set()
     spawn_probability = min(0.9375, int(keyed_hash[-2], 16) / 16)
-    continuation_probability = min(0.9375, int(keyed_hash[-1], 16) / 16)
+    continuation_probability = min(0.9375, (int(keyed_hash[-1], 16) / 16) ** 0.5)
 
     for j in range(500):
         for i in range(1000):
@@ -190,7 +190,7 @@ while s_in != 'qqq':
     if moon_bool:
         moon_vert_pos = int(keyed_hash[30], 16) * 16 + 122
         moon_hori_pos = int(keyed_hash[31], 16) * 32 + 244
-        moon_size = int(keyed_hash[32], 16) * 5
+        moon_size = int(keyed_hash[32], 16) * 5 + 20
 
         moon_color = hex_to_rgb(keyed_hash[33:39])
         moon_secondary = hex_to_rgb(keyed_hash[39:45])
