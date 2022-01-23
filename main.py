@@ -37,9 +37,11 @@ def variate(rgb_tup, bottom, top):
 def check_in(x, y, rad, centerx=500, centery=250):
     return ((x-centerx)**2 + (y-centery)**2) < (rad**2)
 
-def check_ring(x, y, radx, rady, ring_width):
+def check_ring(x, y, radx, rady, ring_width, ring_angle):
+    inner_ring_x = (min(200,radx-ring_width)) if not ring_angle else radx-ring_width
+    inner_ring_y = (min(200,rady-ring_width)) if ring_angle else rady-ring_width
     inside_outer_ring = (((x-500)**2) / (radx**2) + ((y-250)**2) / (rady**2)) < 1
-    inside_inner_ring = (((x-500)**2) / ((min(200,radx-ring_width))**2) + ((y-250)**2) / ((min(200,rady-ring_width))**2)) < 1
+    inside_inner_ring = (((x-500)**2) / (inner_ring_x**2) + ((y-250)**2) / (inner_ring_y**2)) < 1
     return inside_outer_ring and (not inside_inner_ring)
 
 while s_in != 'qqq':
@@ -219,7 +221,7 @@ while s_in != 'qqq':
     print('decide ring ... done')
 
     if ring_bool:
-        ring_angle = int(keyed_hash[-5], 16) > 7
+        ring_angle = False #int(keyed_hash[-5], 16) > 7
         ring_vert_size = int(keyed_hash[47], 16) * 5 + 64
         ring_hori_size = int(keyed_hash[48], 16) * 10 + 200
 
@@ -231,7 +233,7 @@ while s_in != 'qqq':
 
         for j in range(500):
             for i in range(1000):
-                if check_ring(i, j, ring_hori_size, ring_vert_size, ring_width):
+                if check_ring(i, j, ring_hori_size, ring_vert_size, ring_width, ring_angle):
                     if not ring_angle:
                         if j < 250:
                             if pixel_map[i,j] not in colors_so_far:
