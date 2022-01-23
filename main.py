@@ -34,8 +34,8 @@ def variate(rgb_tup, bottom, top):
 
     return (min(RGBMAX,r), min(RGBMAX,g), min(RGBMAX,b))
 
-def check_in_pl(x, y):
-    return ((x-500)**2 + (y-250)**2) < 40000
+def check_in(x, y, rad, centerx=500, centery=250):
+    return ((x-centerx)**2 + (y-centery)**2) < (rad**2)
 
 while s_in != 'qqq':
     initial_hash = hashlib.sha256(s_in.encode('utf-8')).hexdigest()
@@ -118,7 +118,7 @@ while s_in != 'qqq':
 
     for j in range(500):
         for i in range(1000):
-            if check_in_pl(i, j):
+            if check_in(i, j, 200):
                 pixel_map[i, j] = pl_color
 
     print('place planet ... done')
@@ -133,7 +133,7 @@ while s_in != 'qqq':
 
     for j in range(500):
         for i in range(1000):
-            if check_in_pl(i, j):
+            if check_in(i, j, 200):
                 k = random.random()
                 if k > spawn_probability:
                     q = [(i,j)]
@@ -154,7 +154,7 @@ while s_in != 'qqq':
 
                         for pos in surrounds:
                             t = random.random()
-                            if check_in_pl(pos[0], pos[1]) and t > continuation_probability and pos not in secondary_visited:
+                            if check_in(pos[0], pos[1], 200) and t > continuation_probability and pos not in secondary_visited:
                                 q.append(pos)
                                 secondary_visited.add(pos)
 
@@ -166,12 +166,39 @@ while s_in != 'qqq':
 
     for j in range(500):
         for i in range(1000):
-            if check_in_pl(i, j):
+            if check_in(i, j, 200):
                 k = random.random()
                 if k > 0.995:
                     pixel_map[i, j] = pl_tertiary
 
     print('color planet tertiary ... done')
+
+    moon_bool = int(keyed_hash[-3], 16) > 11
+
+    print('decide moon ... done')
+
+    if moon_bool:
+        moon_vert_pos = int(keyed_hash[30], 16) * 16 + 122
+        moon_hori_pos = int(keyed_hash[31], 16) * 32 + 244
+        moon_size = int(keyed_hash[32], 16) * 5
+
+        moon_color = hex_to_rgb(keyed_hash[33:39])
+        moon_secondary = hex_to_rgb(keyed_hash[39:45])
+
+        moon_secondary_prob = int(keyed_hash[46], 16) / 16
+
+        for j in range(500):
+            for i in range(1000):
+                if check_in(i, j, moon_size, moon_hori_pos, moon_vert_pos):
+                    pixel_map[i,j] = moon_color
+
+        for j in range(500):
+            for i in range(1000):
+                if check_in(i, j, moon_size, moon_hori_pos, moon_vert_pos):
+                    if random.random() > moon_secondary_prob:
+                        pixel_map[i,j] = moon_secondary
+
+        print('add moon ... done')
 
     img.save(s_in + '.png')
 
