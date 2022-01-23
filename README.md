@@ -3,7 +3,7 @@ Semi-hash-based Image Generator
 
 Utilizable for NFTs
 
-![sample_image](https://user-images.githubusercontent.com/33227410/150660720-9bdaa13b-b593-436e-8bb9-590a3a5a1578.png)
+![sample_image](https://user-images.githubusercontent.com/33227410/150663800-0fee0279-750f-4608-aca1-4c29eb84130b.png)
 
 ### Generation Process
 1. Input is salted and hashed
@@ -14,6 +14,8 @@ Utilizable for NFTs
 6. Planet is then randomly colored with a tertiary color (not hash-based)
 7. Decide if moon is included based on input hash
 8. Position and color moon based on input hash
+9. Decide if ring is included based on input hash
+10. Size and color ring based on input hash
 
 ### Notes
  - Image size is fixed at 1000 by 500
