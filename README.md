@@ -3,7 +3,7 @@ Semi-hash-based Image Generator
 
 Utilizable for NFTs
 
-![sample_image](https://user-images.githubusercontent.com/33227410/150663800-0fee0279-750f-4608-aca1-4c29eb84130b.png)
+![sample](https://user-images.githubusercontent.com/33227410/150664541-839dfb0b-2d36-4303-96e1-269d25f51532.png)
 
 ### Generation Process
 1. Input is salted and hashed
